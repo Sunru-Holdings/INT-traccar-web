@@ -1,3 +1,6 @@
+/* Replace font family name from google fonts page */
+@import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
+
 html, body {
   height: 100%;
 }
