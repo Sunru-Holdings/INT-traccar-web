@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import { makeStyles } from '@mui/styles';
 import { ReactComponent as Logo } from '../resources/images/logo.svg';
 import { ReactComponent as CustomLogo } from '../config/images/custom.svg';

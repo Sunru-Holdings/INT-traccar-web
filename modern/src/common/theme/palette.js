@@ -1,19 +1,20 @@
 import {
-  amber, grey, green, red, indigo, common,
+  amber, grey, green, indigo, red, common,
 } from '@mui/material/colors';
 import themeConfigurations from '../../config/theme';
 
-const colors = {
-  white: common.white,
-  background: themeConfigurations?.background ?? grey[50],
-  primary: themeConfigurations?.primary ?? indigo[900],
-  secondary: themeConfigurations?.secondary ?? green[500],
-  positive: themeConfigurations?.positive ?? green[500],
-  medium: themeConfigurations?.medium ?? amber[700],
-  negative: themeConfigurations?.negative ?? red[500],
-  neutral: themeConfigurations?.neutral ?? grey[500],
-  geometry: themeConfigurations?.geometry ?? '#3bb2d0',
-};
+const colorPalette = (server) => {
+  const colors = {
+    white: common.white,
+    background: themeConfigurations?.background ?? grey[50],
+    primary: server?.attributes?.colorPrimary ?? themeConfigurations?.primary ?? indigo[900],
+    secondary: server?.attributes?.colorSecondary ?? themeConfigurations?.secondary ?? green[500],
+    positive: themeConfigurations?.positive ?? green[500],
+    medium: themeConfigurations?.medium ?? amber[700],
+    negative: themeConfigurations?.negative ?? red[500],
+    neutral: themeConfigurations?.neutral ?? grey[500],
+    geometry: themeConfigurations?.geometry ?? '#3bb2d0',
+  };
 
   return {
     background: {
@@ -29,3 +30,5 @@ const colors = {
     colors,
   };
 };
+
+export default colorPalette;
