@@ -15,16 +15,17 @@ const colors = {
   geometry: themeConfigurations?.geometry ?? '#3bb2d0',
 };
 
-export default {
-  background: {
-    default: colors.background,
-  },
-  primary: {
-    main: colors.primary,
-  },
-  secondary: {
-    main: colors.secondary,
-    contrastText: colors.white,
-  },
-  colors,
+  return {
+    background: {
+      default: colors.background,
+    },
+    primary: {
+      main: colors.primary,
+    },
+    secondary: {
+      main: colors.secondary,
+      contrastText: colors.white,
+    },
+    colors,
+  };
 };
