@@ -13,6 +13,10 @@ export default (t) => useMemo(() => ({
     name: t('serverLogo'),
     type: 'string',
   },
+  logoInverted: {
+    name: t('serverLogoInverted'),
+    type: 'string',
+  },
   colorPrimary: {
     name: t('serverColorPrimary'),
     type: 'string',
@@ -22,6 +26,26 @@ export default (t) => useMemo(() => ({
     name: t('serverColorSecondary'),
     type: 'string',
     subtype: 'color',
+  },
+  disableChange: {
+    name: t('serverChangeDisable'),
+    type: 'boolean',
+  },
+  darkMode: {
+    name: t('settingsDarkMode'),
+    type: 'boolean',
+  },
+  totpEnable: {
+    name: t('settingsTotpEnable'),
+    type: 'boolean',
+  },
+  totpForce: {
+    name: t('settingsTotpForce'),
+    type: 'boolean',
+  },
+  serviceWorkerUpdateInterval: {
+    name: t('settingsServiceWorkerUpdateInterval'),
+    type: 'number',
   },
   'ui.disableLoginLanguage': {
     name: t('attributeUiDisableLoginLanguage'),

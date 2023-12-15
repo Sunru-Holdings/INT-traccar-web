@@ -5,9 +5,9 @@ import dimensions from './dimensions';
 import components from './components';
 import typography from './typography';
 
-export default (server) => useMemo(() => createTheme({
-  palette: palette(server),
+export default (server, darkMode) => useMemo(() => createTheme({
+  palette: palette(server, darkMode),
   dimensions,
   components,
   typography,
-}), [server]);
+}), [server, darkMode]);
