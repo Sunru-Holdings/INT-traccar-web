@@ -20,5 +20,3 @@ export default (server, darkMode) => ({
     main: '#3bb2d0',
   },
 });
-
-export default colorPalette;
