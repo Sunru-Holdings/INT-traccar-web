@@ -18,7 +18,7 @@ import useMapStyles from '../map/core/useMapStyles';
 import useMapOverlays from '../map/overlay/useMapOverlays';
 import { useCatch } from '../reactHelper';
 import { sessionActions } from '../store';
-import { useRestriction } from '../common/util/permissions';
+import { useAdministrator, useRestriction } from '../common/util/permissions';
 import useSettingsStyles from './common/useSettingsStyles';
 
 const deviceFields = [
@@ -35,6 +35,7 @@ const PreferencesPage = () => {
   const navigate = useNavigate();
   const t = useTranslation();
 
+  const admin = useAdministrator();
   const readonly = useRestriction('readonly');
 
   const user = useSelector((state) => state.session.user);
@@ -86,6 +87,11 @@ const PreferencesPage = () => {
     }
   });
 
+  const handleReboot = useCatch(async () => {
+    const response = await fetch('/api/server/reboot', { method: 'POST' });
+    throw Error(response.statusText);
+  });
+
   return (
     <PageLayout menu={<SettingsMenu />} breadcrumbs={['settingsTitle', 'sharedPreferences']}>
       <Container maxWidth="xs" className={classes.container}>
@@ -102,7 +108,7 @@ const PreferencesPage = () => {
                   <InputLabel>{t('mapActive')}</InputLabel>
                   <Select
                     label={t('mapActive')}
-                    value={attributes.activeMapStyles?.split(',') || ['locationIqStreets', 'osm', 'carto']}
+                    value={attributes.activeMapStyles?.split(',') || ['locationIqStreets', 'locationIqDark', 'openFreeMap']}
                     onChange={(e, child) => {
                       const clicked = mapStyles.find((s) => s.id === child.props.value);
                       if (clicked.available) {
@@ -345,6 +351,22 @@ const PreferencesPage = () => {
                   label={t('settingsConnection')}
                   disabled
                 />
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => navigate('/emulator')}
+                >
+                  {t('sharedEmulator')}
+                </Button>
+                {admin && (
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={handleReboot}
+                  >
+                    {t('serverReboot')}
+                  </Button>
+                )}
               </AccordionDetails>
             </Accordion>
             <div className={classes.buttons}>

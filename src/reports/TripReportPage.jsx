@@ -9,7 +9,7 @@ import {
   formatDistance, formatSpeed, formatVolume, formatTime, formatNumericHours,
 } from '../common/util/formatter';
 import ReportFilter from './components/ReportFilter';
-import { useAttributePreference, usePreference } from '../common/util/preferences';
+import { useAttributePreference } from '../common/util/preferences';
 import { useTranslation } from '../common/components/LocalizationProvider';
 import PageLayout from '../common/components/PageLayout';
 import ReportsMenu from './components/ReportsMenu';
@@ -25,6 +25,7 @@ import MapMarkers from '../map/MapMarkers';
 import MapCamera from '../map/MapCamera';
 import MapGeofence from '../map/MapGeofence';
 import scheduleReport from './common/scheduleReport';
+import MapScale from '../map/MapScale';
 
 const columnsArray = [
   ['startTime', 'reportStartTime'],
@@ -50,7 +51,6 @@ const TripReportPage = () => {
   const distanceUnit = useAttributePreference('distanceUnit');
   const speedUnit = useAttributePreference('speedUnit');
   const volumeUnit = useAttributePreference('volumeUnit');
-  const hours12 = usePreference('twelveHourFormat');
 
   const [columns, setColumns] = usePersistedState('tripColumns', ['startTime', 'endTime', 'distance', 'averageSpeed']);
   const [items, setItems] = useState([]);
@@ -62,12 +62,12 @@ const TripReportPage = () => {
     {
       latitude: selectedItem.startLat,
       longitude: selectedItem.startLon,
-      image: 'default-error',
+      image: 'start-success',
     },
     {
       latitude: selectedItem.endLat,
       longitude: selectedItem.endLon,
-      image: 'default-success',
+      image: 'finish-error',
     },
   ]);
 
@@ -130,27 +130,28 @@ const TripReportPage = () => {
   });
 
   const formatValue = (item, key) => {
+    const value = item[key];
     switch (key) {
       case 'startTime':
       case 'endTime':
-        return formatTime(item[key], 'minutes', hours12);
+        return formatTime(value, 'minutes');
       case 'startOdometer':
       case 'endOdometer':
       case 'distance':
-        return formatDistance(item[key], distanceUnit, t);
+        return formatDistance(value, distanceUnit, t);
       case 'averageSpeed':
       case 'maxSpeed':
-        return formatSpeed(item[key], speedUnit, t);
+        return value > 0 ? formatSpeed(value, speedUnit, t) : null;
       case 'duration':
-        return formatNumericHours(item[key], t);
+        return formatNumericHours(value, t);
       case 'spentFuel':
-        return formatVolume(item[key], volumeUnit, t);
+        return value > 0 ? formatVolume(value, volumeUnit, t) : null;
       case 'startAddress':
-        return (<AddressValue latitude={item.startLat} longitude={item.startLon} originalAddress={item[key]} />);
+        return (<AddressValue latitude={item.startLat} longitude={item.startLon} originalAddress={value} />);
       case 'endAddress':
-        return (<AddressValue latitude={item.endLat} longitude={item.endLon} originalAddress={item[key]} />);
+        return (<AddressValue latitude={item.endLat} longitude={item.endLon} originalAddress={value} />);
       default:
-        return item[key];
+        return value;
     }
   };
 
@@ -169,11 +170,12 @@ const TripReportPage = () => {
                 </>
               )}
             </MapView>
+            <MapScale />
           </div>
         )}
         <div className={classes.containerMain}>
           <div className={classes.header}>
-            <ReportFilter handleSubmit={handleSubmit} handleSchedule={handleSchedule}>
+            <ReportFilter handleSubmit={handleSubmit} handleSchedule={handleSchedule} loading={loading}>
               <ColumnSelect columns={columns} setColumns={setColumns} columnsArray={columnsArray} />
             </ReportFilter>
           </div>

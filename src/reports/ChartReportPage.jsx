@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import {
-  FormControl, InputLabel, Select, MenuItem,
+  FormControl, InputLabel, Select, MenuItem, useTheme,
 } from '@mui/material';
 import {
-  CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
+  Brush, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts';
 import ReportFilter from './components/ReportFilter';
 import { formatTime } from '../common/util/formatter';
@@ -13,7 +13,7 @@ import PageLayout from '../common/components/PageLayout';
 import ReportsMenu from './components/ReportsMenu';
 import usePositionAttributes from '../common/attributes/usePositionAttributes';
 import { useCatch } from '../reactHelper';
-import { useAttributePreference, usePreference } from '../common/util/preferences';
+import { useAttributePreference } from '../common/util/preferences';
 import {
   altitudeFromMeters, distanceFromMeters, speedFromKnots, volumeFromLiters,
 } from '../common/util/converter';
@@ -21,6 +21,7 @@ import useReportStyles from './common/useReportStyles';
 
 const ChartReportPage = () => {
   const classes = useReportStyles();
+  const theme = useTheme();
   const t = useTranslation();
 
   const positionAttributes = usePositionAttributes(t);
@@ -29,11 +30,11 @@ const ChartReportPage = () => {
   const altitudeUnit = useAttributePreference('altitudeUnit');
   const speedUnit = useAttributePreference('speedUnit');
   const volumeUnit = useAttributePreference('volumeUnit');
-  const hours12 = usePreference('twelveHourFormat');
 
   const [items, setItems] = useState([]);
   const [types, setTypes] = useState(['speed']);
   const [type, setType] = useState('speed');
+  const [timeType, setTimeType] = useState('fixTime');
 
   const values = items.map((it) => it[type]);
   const minValue = Math.min(...values);
@@ -53,6 +54,8 @@ const ChartReportPage = () => {
         const data = { ...position, ...position.attributes };
         const formatted = {};
         formatted.fixTime = dayjs(position.fixTime).valueOf();
+        formatted.deviceTime = dayjs(position.deviceTime).valueOf();
+        formatted.serverTime = dayjs(position.serverTime).valueOf();
         Object.keys(data).filter((key) => !['id', 'deviceId'].includes(key)).forEach((key) => {
           const value = data[key];
           if (typeof value === 'number') {
@@ -113,6 +116,21 @@ const ChartReportPage = () => {
             </Select>
           </FormControl>
         </div>
+        <div className={classes.filterItem}>
+          <FormControl fullWidth>
+            <InputLabel>{t('reportTimeType')}</InputLabel>
+            <Select
+              label={t('reportTimeType')}
+              value={timeType}
+              onChange={(e) => setTimeType(e.target.value)}
+              disabled={!items.length}
+            >
+              <MenuItem value="fixTime">{t('positionFixTime')}</MenuItem>
+              <MenuItem value="deviceTime">{t('positionDeviceTime')}</MenuItem>
+              <MenuItem value="serverTime">{t('positionServerTime')}</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
       </ReportFilter>
       {items.length > 0 && (
         <div className={classes.chart}>
@@ -124,23 +142,38 @@ const ChartReportPage = () => {
               }}
             >
               <XAxis
-                dataKey="fixTime"
+                stroke={theme.palette.text.primary}
+                dataKey={timeType}
                 type="number"
-                tickFormatter={(value) => formatTime(value, 'time', hours12)}
+                tickFormatter={(value) => formatTime(value, 'time')}
                 domain={['dataMin', 'dataMax']}
                 scale="time"
               />
               <YAxis
+                stroke={theme.palette.text.primary}
                 type="number"
                 tickFormatter={(value) => value.toFixed(2)}
                 domain={[minValue - valueRange / 5, maxValue + valueRange / 5]}
               />
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid stroke={theme.palette.divider} strokeDasharray="3 3" />
               <Tooltip
+                contentStyle={{ backgroundColor: theme.palette.background.default, color: theme.palette.text.primary }}
                 formatter={(value, key) => [value, positionAttributes[key]?.name || key]}
-                labelFormatter={(value) => formatTime(value, 'seconds', hours12)}
+                labelFormatter={(value) => formatTime(value, 'seconds')}
               />
-              <Line type="monotone" dataKey={type} />
+              <Brush
+                dataKey={timeType}
+                height={30}
+                stroke={theme.palette.primary.main}
+                tickFormatter={() => ''}
+              />
+              <Line
+                type="monotone"
+                dataKey={type}
+                stroke={theme.palette.primary.main}
+                dot={false}
+                activeDot={{ r: 6 }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>

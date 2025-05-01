@@ -23,6 +23,7 @@ import TableShimmer from '../common/components/TableShimmer';
 import MapCamera from '../map/MapCamera';
 import MapGeofence from '../map/MapGeofence';
 import scheduleReport from './common/scheduleReport';
+import MapScale from '../map/MapScale';
 
 const RouteReportPage = () => {
   const navigate = useNavigate();
@@ -113,12 +114,13 @@ const RouteReportPage = () => {
               })}
               <MapPositions positions={[selectedItem]} titleField="fixTime" />
             </MapView>
+            <MapScale />
             <MapCamera positions={items} />
           </div>
         )}
         <div className={classes.containerMain}>
           <div className={classes.header}>
-            <ReportFilter handleSubmit={handleSubmit} handleSchedule={handleSchedule} multiDevice>
+            <ReportFilter handleSubmit={handleSubmit} handleSchedule={handleSchedule} multiDevice loading={loading}>
               <ColumnSelect
                 columns={columns}
                 setColumns={setColumns}

@@ -3,7 +3,6 @@ import {
   Route, Routes, useLocation, useNavigate,
 } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { LinearProgress } from '@mui/material';
 import MainPage from './main/MainPage';
 import CombinedReportPage from './reports/CombinedReportPage';
 import RouteReportPage from './reports/RouteReportPage';
@@ -57,6 +56,8 @@ import UserConnectionsPage from './settings/UserConnectionsPage';
 import LogsPage from './reports/LogsPage';
 import SharePage from './settings/SharePage';
 import AnnouncementPage from './settings/AnnouncementPage';
+import EmulatorPage from './other/EmulatorPage';
+import Loader from './common/components/Loader';
 
 const Navigation = () => {
   const navigate = useNavigate();
@@ -93,7 +94,7 @@ const Navigation = () => {
   }, [query]);
 
   if (!redirectsHandled) {
-    return (<LinearProgress />);
+    return (<Loader />);
   }
   return (
     <Routes>
@@ -109,6 +110,7 @@ const Navigation = () => {
         <Route path="event/:id" element={<EventPage />} />
         <Route path="replay" element={<ReplayPage />} />
         <Route path="geofences" element={<GeofencesPage />} />
+        <Route path="emulator" element={<EmulatorPage />} />
 
         <Route path="settings">
           <Route path="accumulators/:deviceId" element={<AccumulatorsPage />} />
